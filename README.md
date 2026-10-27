@@ -51,23 +51,33 @@ Rent/
 
 ## 🚀 Local Development Setup
 
-### 1. Frontend Setup
+### One-Command Setup (Frontend + Persistent Database Server)
 ```bash
-# Install dependencies
+# Install dependencies (first time only)
 npm install
 
-# Start Vite development server
+# Start both Vite Frontend (port 3000) and Backend Database Server (port 5000)
 npm run dev
 ```
-Frontend runs on **`http://localhost:3000`**.
 
-### 2. Backend Setup (Optional for API & MongoDB storage)
-```bash
-cd server
-npm install
-node server.js
-```
-Backend runs on **`http://localhost:5000`**.
+- **Frontend:** `http://localhost:3000`
+- **Backend API & Database:** `http://localhost:5000/api`
+
+---
+
+## 🗄️ Database Architecture & Multi-Account Sharing
+
+Rently includes a hybrid database architecture:
+1. **Persistent Zero-Config Database (`server/data/`):**
+   - Stores all **Products**, **Users**, and **Rentals** on disk in JSON database format.
+   - Requires zero external installations; any item uploaded by Account A is immediately saved to the database and visible in real-time to Account B across all browsers, incognito sessions, and devices.
+   - Includes real-time 4-second polling and window focus auto-synchronization.
+2. **MongoDB / MongoDB Atlas Support (Optional):**
+   - To connect to MongoDB or MongoDB Atlas in production, simply provide your connection string in `server/.env`:
+     ```env
+     MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/rentalhub
+     ```
+   - When detected, Rently automatically uses Mongoose models; otherwise, it seamlessly uses the persistent local database engine without any downtime or crashes.
 
 ---
 

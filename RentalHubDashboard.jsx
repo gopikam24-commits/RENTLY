@@ -45,7 +45,7 @@ import {
      --ink-soft #8A6668 body / muted text
  ------------------------------------------------------------------- */
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://127.0.0.1:5000/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
 
 const PALETTE = {
   cream: "#ECEBE8",
@@ -312,8 +312,12 @@ export default function RentalHubDashboard() {
       const res = await fetch(`${API_BASE}/products`);
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data) && data.length > 0) {
-          setProducts(data.map((item) => ({ ...item, id: item._id || item.id })));
+        if (Array.isArray(data)) {
+          const formatted = data.map((item) => ({ ...item, id: item._id || item.id }));
+          setProducts(formatted);
+          try {
+            localStorage.setItem("rently_v3_products", JSON.stringify(formatted));
+          } catch {}
         }
       }
     } catch (e) {
@@ -326,7 +330,12 @@ export default function RentalHubDashboard() {
       const res = await fetch(`${API_BASE}/rentals`);
       if (res.ok) {
         const data = await res.json();
-        setRentals(data);
+        if (Array.isArray(data)) {
+          setRentals(data);
+          try {
+            localStorage.setItem("rently_v3_rentals", JSON.stringify(data));
+          } catch {}
+        }
       }
     } catch (e) {
       console.warn("Could not fetch rentals from server.", e);
@@ -336,6 +345,23 @@ export default function RentalHubDashboard() {
   useEffect(() => {
     fetchProducts();
     fetchRentals();
+
+    // Auto-sync polling every 4 seconds so listings from any other account appear automatically
+    const syncInterval = setInterval(() => {
+      fetchProducts();
+      fetchRentals();
+    }, 4000);
+
+    const onFocus = () => {
+      fetchProducts();
+      fetchRentals();
+    };
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(syncInterval);
+      window.removeEventListener("focus", onFocus);
+    };
   }, []);
 
   const trackRecentlyViewed = (product) => {
@@ -444,13 +470,15 @@ export default function RentalHubDashboard() {
         const created = await res.json();
         const finalItem = { ...payload, ...created, id: created._id || created.id || payload.id };
         setProducts((prev) => {
-          const updated = [finalItem, ...prev];
+          const filtered = prev.filter((p) => (p._id || p.id) !== finalItem.id);
+          const updated = [finalItem, ...filtered];
           try {
             localStorage.setItem("rently_v3_products", JSON.stringify(updated));
           } catch {}
           return updated;
         });
         flash(`"${newProdData.title}" listed successfully!`);
+        fetchProducts();
       } else {
         setProducts((prev) => {
           const updated = [payload, ...prev];
@@ -472,6 +500,7 @@ export default function RentalHubDashboard() {
       flash(`"${newProdData.title}" listed successfully!`);
     }
     setActiveModal(null);
+    setFeedView("all");
   };
 
   const handleDeleteProduct = async (productId) => {
@@ -1025,6 +1054,9 @@ export default function RentalHubDashboard() {
               localStorage.setItem("rently_v3_active_user", JSON.stringify(user));
             } catch {}
             setActiveModal(null);
+            setFeedView("all");
+            fetchProducts();
+            fetchRentals();
             flash(`Welcome back, ${user.name}!`);
           }}
         />
@@ -1067,6 +1099,9 @@ export default function RentalHubDashboard() {
               localStorage.removeItem("rently_v3_active_user");
             } catch {}
             setActiveModal(null);
+            setFeedView("all");
+            fetchProducts();
+            fetchRentals();
             flash("Logged out successfully.");
           }}
         />

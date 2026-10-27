@@ -1,0 +1,102 @@
+[
+  {
+    "_id": "p_demo_1",
+    "id": "p_demo_1",
+    "title": "Sony Alpha A7 IV Mirrorless Camera + 24-70mm GM Lens",
+    "price": 1500,
+    "priceUnit": "day",
+    "advanceDeposit": 5000,
+    "location": "Perur, Coimbatore",
+    "distanceKm": 2,
+    "tag": "Photography",
+    "description": "33MP full-frame hybrid camera with 4K 60p 10-bit video, pristine Sony G Master 24-70mm f/2.8 lens, 2x 128GB V90 cards, 3 batteries, and dual charger. Perfect for weddings and shoots.",
+    "images": [
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80"
+    ],
+    "sellerId": "u_demo_rajesh",
+    "sellerName": "Rajesh Kumar",
+    "sellerPhone": "+91 98401 23456",
+    "sellerEmail": "rajesh.camera@example.com",
+    "sellerAddress": "Perur, Coimbatore",
+    "pickupInstructions": "Available for handover from 7:00 AM. Original Govt ID verification required at pickup.",
+    "rating": 5,
+    "reviewCount": 14,
+    "createdAt": "2026-10-27T13:19:15.651Z"
+  },
+  {
+    "_id": "p_demo_2",
+    "id": "p_demo_2",
+    "title": "DJI Mini 3 Pro Drone Combo + RC Smart Controller",
+    "price": 1800,
+    "priceUnit": "day",
+    "advanceDeposit": 6000,
+    "location": "Anna Nagar, Chennai",
+    "distanceKm": 5,
+    "tag": "Drones",
+    "description": "Sub-249g lightweight 4K HDR drone with tri-directional obstacle sensing, true vertical shooting, 3 intelligent flight batteries (34 mins each), ND filter kit, and shoulder bag.",
+    "images": [
+      "https://images.unsplash.com/photo-1508614589041-895b88991e3e?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1473968512647-3e447244af8f?auto=format&fit=crop&w=800&q=80"
+    ],
+    "sellerId": "u_demo_alex",
+    "sellerName": "Alex Morgan",
+    "sellerPhone": "+91 98765 43210",
+    "sellerEmail": "alex.morgan@example.com",
+    "sellerAddress": "Anna Nagar, Chennai",
+    "pickupInstructions": "Pick up near 2nd Avenue Metro station. Drone test flight demonstrated at handover.",
+    "rating": 4.9,
+    "reviewCount": 8,
+    "createdAt": "2026-10-27T13:19:15.651Z"
+  },
+  {
+    "_id": "p_demo_3",
+    "id": "p_demo_3",
+    "title": "Quechua 4-Person Waterproof Camping Tent & Dual Sleeping Bags",
+    "price": 450,
+    "priceUnit": "day",
+    "advanceDeposit": 1500,
+    "location": "Gandhipuram, Coimbatore",
+    "distanceKm": 4,
+    "tag": "Camping & Outdoors",
+    "description": "FreshDecath waterproof 4-person dome tent with blackout technology, 2 self-inflating camp mattresses, 2 compact thermal sleeping bags (-5°C rating), and battery LED camping lantern.",
+    "images": [
+      "https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800&q=80"
+    ],
+    "sellerId": "u_demo_rajesh",
+    "sellerName": "Rajesh Kumar",
+    "sellerPhone": "+91 98401 23456",
+    "sellerEmail": "rajesh.camera@example.com",
+    "sellerAddress": "Gandhipuram, Coimbatore",
+    "pickupInstructions": "All gear cleaned and sanitized. Easy 5-minute setup demonstration provided.",
+    "rating": 4.8,
+    "reviewCount": 19,
+    "createdAt": "2026-10-27T13:19:15.651Z"
+  },
+  {
+    "_id": "p_demo_4",
+    "id": "p_demo_4",
+    "title": "Epson Home Cinema 1080p FHD Projector & 100-inch Foldable Screen",
+    "price": 900,
+    "priceUnit": "day",
+    "advanceDeposit": 3000,
+    "location": "RS Puram, Coimbatore",
+    "distanceKm": 3,
+    "tag": "Electronics",
+    "description": "3,300 lumens vivid color brightness projector with HDMI/FireStick support, built-in speaker, plus a freestanding 100-inch portable high-gain screen for movie nights & matches.",
+    "images": [
+      "https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=800&q=80"
+    ],
+    "sellerId": "u_demo_rajesh",
+    "sellerName": "Rajesh Kumar",
+    "sellerPhone": "+91 98401 23456",
+    "sellerEmail": "rajesh.camera@example.com",
+    "sellerAddress": "RS Puram, Coimbatore",
+    "pickupInstructions": "HDMI cables and power extensions included in rugged travel case.",
+    "rating": 5,
+    "reviewCount": 6,
+    "createdAt": "2026-10-27T13:19:15.651Z"
+  }
+]

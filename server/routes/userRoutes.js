@@ -1,20 +1,8 @@
 import express from 'express';
 import { User } from '../models/User.js';
+import { localDb } from '../config/localDb.js';
 
 const router = express.Router();
-
-let memoryUsers = [
-  {
-    _id: 'u_demo_alex',
-    name: 'Alex Morgan',
-    email: 'alex.morgan@example.com',
-    password: 'password123',
-    phone: '+91 98765 43210',
-    location: 'Anna Nagar, Chennai',
-    avatar: 'https://picsum.photos/seed/useravatar/200/200',
-    bio: 'Avid photographer & tech enthusiast. Love sharing gear and borrowing outdoor equipment!',
-  },
-];
 
 const sanitizeUser = (user) => {
   const obj = user.toObject ? user.toObject() : { ...user };
@@ -44,27 +32,26 @@ export function getUserRouter(isMongoConnected) {
           password,
           phone: phone || '+91 98765 43210',
           location: location || 'Anna Nagar, Chennai',
-          avatar: `https://picsum.photos/seed/${encodeURIComponent(normalizedEmail)}/200/200`,
+          avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80`,
           bio: 'Rently member ready to rent and share gear.',
         });
         return res.status(201).json(sanitizeUser(newUser));
       } else {
-        const existing = memoryUsers.find((u) => u.email.toLowerCase() === normalizedEmail);
+        const existing = localDb.findOne('users', (u) => u.email?.toLowerCase().trim() === normalizedEmail);
         if (existing) {
           return res.status(400).json({ error: 'An account with this email already exists. Please log in.' });
         }
         const newUser = {
-          _id: 'u_' + Date.now(),
           name: name.trim(),
           email: normalizedEmail,
           password,
           phone: phone || '+91 98765 43210',
           location: location || 'Anna Nagar, Chennai',
-          avatar: `https://picsum.photos/seed/${encodeURIComponent(normalizedEmail)}/200/200`,
+          avatar: `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=400&q=80`,
           bio: 'Rently member ready to rent and share gear.',
         };
-        memoryUsers.push(newUser);
-        return res.status(201).json(sanitizeUser(newUser));
+        const created = localDb.insert('users', newUser);
+        return res.status(201).json(sanitizeUser(created));
       }
     } catch (err) {
       console.error('[Register Error]', err);
@@ -84,18 +71,16 @@ export function getUserRouter(isMongoConnected) {
 
       if (isMongoConnected()) {
         let user = await User.findOne({ email: normalizedEmail });
-        if (!user && normalizedEmail === 'alex.morgan@example.com') {
-          if (password === 'password123') {
-            return res.json({
-              _id: 'u_demo_alex',
-              name: 'Alex Morgan',
-              email: 'alex.morgan@example.com',
-              phone: '+91 98765 43210',
-              location: 'Anna Nagar, Chennai',
-              avatar: 'https://picsum.photos/seed/useravatar/200/200',
-              bio: 'Avid photographer & tech enthusiast. Love sharing gear and borrowing outdoor equipment!',
-            });
-          }
+        if (!user && normalizedEmail === 'alex.morgan@example.com' && password === 'password123') {
+          user = await User.create({
+            name: 'Alex Morgan',
+            email: 'alex.morgan@example.com',
+            password: 'password123',
+            phone: '+91 98765 43210',
+            location: 'Anna Nagar, Chennai',
+            avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80',
+            bio: 'Avid photographer & tech enthusiast. Love sharing gear and borrowing outdoor equipment!',
+          });
         }
         if (!user) {
           return res.status(401).json({ error: 'No account found with this email. Please check your email or create an account.' });
@@ -105,7 +90,7 @@ export function getUserRouter(isMongoConnected) {
         }
         return res.json(sanitizeUser(user));
       } else {
-        const user = memoryUsers.find((u) => u.email.toLowerCase() === normalizedEmail);
+        const user = localDb.findOne('users', (u) => u.email?.toLowerCase().trim() === normalizedEmail);
         if (!user) {
           return res.status(401).json({ error: 'No account found with this email. Please check your email or create an account.' });
         }
@@ -135,18 +120,6 @@ export function getUserRouter(isMongoConnected) {
 
       if (isMongoConnected()) {
         let user = await User.findOne({ email: normalizedEmail });
-        if (!user && normalizedEmail === 'alex.morgan@example.com') {
-          user = await User.create({
-            name: 'Alex Morgan',
-            email: 'alex.morgan@example.com',
-            password: newPassword,
-            phone: '+91 98765 43210',
-            location: 'Anna Nagar, Chennai',
-            avatar: 'https://picsum.photos/seed/useravatar/200/200',
-            bio: 'Avid photographer & tech enthusiast. Love sharing gear and borrowing outdoor equipment!',
-          });
-          return res.json({ success: true, message: 'Password updated successfully. You can now log in.' });
-        }
         if (!user) {
           return res.status(404).json({ error: 'No account found with this email. Please check your email or sign up.' });
         }
@@ -154,11 +127,11 @@ export function getUserRouter(isMongoConnected) {
         await user.save();
         return res.json({ success: true, message: 'Password updated successfully. You can now log in.' });
       } else {
-        const user = memoryUsers.find((u) => u.email.toLowerCase() === normalizedEmail);
+        const user = localDb.findOne('users', (u) => u.email?.toLowerCase().trim() === normalizedEmail);
         if (!user) {
           return res.status(404).json({ error: 'No account found with this email. Please check your email or sign up.' });
         }
-        user.password = newPassword;
+        localDb.update('users', user._id || user.id, { password: newPassword });
         return res.json({ success: true, message: 'Password updated successfully. You can now log in.' });
       }
     } catch (err) {
@@ -182,23 +155,20 @@ export function getUserRouter(isMongoConnected) {
           user = await User.findOne();
         }
 
-        if (!user) {
-          return res.status(404).json({ error: 'User not found.' });
-        }
+        if (!user) return res.status(404).json({ error: 'User not found.' });
         return res.json(sanitizeUser(user));
       } else {
         let user;
         if (email) {
-          user = memoryUsers.find((u) => u.email.toLowerCase() === email.toLowerCase().trim());
+          user = localDb.findOne('users', (u) => u.email?.toLowerCase().trim() === email.toLowerCase().trim());
         } else if (id) {
-          user = memoryUsers.find((u) => u._id === id);
+          user = localDb.findById('users', id);
         } else {
-          user = memoryUsers[0];
+          const all = localDb.read('users');
+          user = all[0];
         }
 
-        if (!user) {
-          return res.status(404).json({ error: 'User not found.' });
-        }
+        if (!user) return res.status(404).json({ error: 'User not found.' });
         return res.json(sanitizeUser(user));
       }
     } catch (err) {
@@ -209,28 +179,37 @@ export function getUserRouter(isMongoConnected) {
   // PUT /api/user/profile
   router.put('/profile', async (req, res) => {
     try {
-      const { name, email, phone, location, bio, _id } = req.body;
-      const updates = { name, phone, location, bio };
+      const { name, email, phone, location, bio, _id, id } = req.body;
+      const updates = {};
+      if (name) updates.name = name.trim();
+      if (phone) updates.phone = phone.trim();
+      if (location) updates.location = location.trim();
+      if (bio) updates.bio = bio.trim();
+
+      const targetId = _id || id;
       const targetEmail = email ? email.toLowerCase().trim() : null;
 
       if (isMongoConnected()) {
-        const query = _id ? { _id } : targetEmail ? { email: targetEmail } : {};
+        const query = targetId ? { _id: targetId } : targetEmail ? { email: targetEmail } : {};
         const user = await User.findOneAndUpdate(query, updates, { new: true });
-        if (!user) {
-          return res.status(404).json({ error: 'User profile to update was not found.' });
-        }
+        if (!user) return res.status(404).json({ error: 'User profile to update was not found.' });
         return res.json(sanitizeUser(user));
       } else {
-        const index = memoryUsers.findIndex((u) => (_id ? u._id === _id : targetEmail ? u.email.toLowerCase() === targetEmail : false));
-        if (index === -1) {
-          if (memoryUsers.length > 0) {
-            memoryUsers[0] = { ...memoryUsers[0], ...updates };
-            return res.json(sanitizeUser(memoryUsers[0]));
-          }
-          return res.status(404).json({ error: 'User not found.' });
+        let user = targetId
+          ? localDb.findById('users', targetId)
+          : targetEmail
+          ? localDb.findOne('users', (u) => u.email?.toLowerCase().trim() === targetEmail)
+          : null;
+
+        if (!user) {
+          const all = localDb.read('users');
+          if (all.length > 0) user = all[0];
         }
-        memoryUsers[index] = { ...memoryUsers[index], ...updates };
-        return res.json(sanitizeUser(memoryUsers[index]));
+
+        if (!user) return res.status(404).json({ error: 'User not found.' });
+
+        const updated = localDb.update('users', user._id || user.id, updates);
+        return res.json(sanitizeUser(updated));
       }
     } catch (err) {
       return res.status(500).json({ error: err.message });

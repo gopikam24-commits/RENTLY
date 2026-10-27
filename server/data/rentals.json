@@ -1,0 +1,42 @@
+[
+  {
+    "_id": "r_demo_sample",
+    "productId": "p_demo_1",
+    "productTitle": "Sony Alpha A7 IV Mirrorless Camera + 24-70mm GM Lens",
+    "productImage": "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80",
+    "renterId": "u_demo_alex",
+    "renterName": "Alex Morgan",
+    "renterEmail": "alex.morgan@example.com",
+    "renterPhone": "+91 98765 43210",
+    "sellerId": "u_demo_rajesh",
+    "sellerName": "Rajesh Kumar",
+    "sellerEmail": "rajesh.camera@example.com",
+    "sellerPhone": "+91 98401 23456",
+    "sellerAddress": "Perur, Coimbatore",
+    "startDate": "2026-10-27",
+    "days": 2,
+    "totalPrice": 3000,
+    "advanceDeposit": 5000,
+    "depositRefunded": false,
+    "pickupOtp": "849201",
+    "pickupVerified": true,
+    "pickupPhotos": [
+      "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80"
+    ],
+    "pickupTimestamp": "2026-10-27T13:19:15.651Z",
+    "returnOtp": "391042",
+    "returnVerified": false,
+    "returnPhotos": [],
+    "status": "Active",
+    "messages": [
+      {
+        "sender": "System / Rently Platform",
+        "senderEmail": "system@rently.com",
+        "text": "Rental confirmed. Pickup OTP verified. Private chat active between Owner & Renter.",
+        "isProof": false,
+        "createdAt": "2026-10-27T13:19:15.651Z"
+      }
+    ],
+    "createdAt": "2026-10-27T13:19:15.651Z"
+  }
+]
