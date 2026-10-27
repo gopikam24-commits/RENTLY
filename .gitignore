@@ -32,3 +32,5 @@ dist-ssr
 .vercel
 
 push.sh
+*.db
+*.db-journal

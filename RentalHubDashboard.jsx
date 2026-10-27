@@ -45,7 +45,7 @@ import {
      --ink-soft #8A6668 body / muted text
  ------------------------------------------------------------------- */
 
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000/api";
+const API_BASE = import.meta.env.VITE_API_BASE || "/api";
 
 const PALETTE = {
   cream: "#ECEBE8",
