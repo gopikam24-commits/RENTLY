@@ -1,7 +1,7 @@
 import { createClient } from '@libsql/client';
 
-const url = process.env.TURSO_DATABASE_URL || process.env.SQLITE_URL || 'file:/tmp/rently.db';
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const url = process.env.TURSO_DATABASE_URL || 'libsql://rental-gopika.aws-ap-south-1.turso.io';
+const authToken = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMTEwMTcsImlkIjoiMDFhMTdkYmQtY2IwMS03ZjBjLThkNjEtYzNjYjBmMGJkYTc4Iiwia2lkIjoiM1hKNFMxSmo5MTZxRG5TMzhBM3ZMcmhlMkNyd1ZzNHZqNmI1UWJhN25xUSIsInJpZCI6IjA2MzlmMWE0LTAzZDgtNDA0Zi04NjRlLTNmOWRhNDVlNDIwYiJ9.0WMBWABbz9sciD38FQwBPvqRaWHBQUAAG6jG6SQRlBITdfv7SBehjECxrKVwDSWaBo2ON0hSWRJMePRTu-J-Dw';
 
 export const client = createClient({
   url,
@@ -102,6 +102,20 @@ export async function ensureTables() {
           new Date().toISOString(),
         ],
       });
+      await client.execute({
+        sql: `INSERT INTO users (id, name, email, password, phone, location, avatar, bio, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: [
+          'u_demo_rajesh',
+          'Rajesh Kumar',
+          'rajesh.camera@example.com',
+          'password123',
+          '+91 98401 23456',
+          'Perur, Coimbatore',
+          'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80',
+          'Professional filmmaker & drone pilot renting high-end production equipment.',
+          new Date().toISOString(),
+        ],
+      });
     }
 
     // Check if initial products exist
@@ -156,6 +170,30 @@ export async function ensureTables() {
           reviewCount: 8,
           createdAt: new Date().toISOString(),
         },
+        {
+          id: 'p_demo_3',
+          title: 'Quechua 4-Person Waterproof Camping Tent & Dual Sleeping Bags',
+          price: 450,
+          priceUnit: 'day',
+          advanceDeposit: 1500,
+          location: 'Gandhipuram, Coimbatore',
+          distanceKm: 4,
+          tag: 'Camping & Outdoors',
+          description: 'FreshDecath waterproof 4-person dome tent with blackout technology, 2 self-inflating camp mattresses, 2 compact thermal sleeping bags (-5°C rating), and battery LED camping lantern.',
+          images: JSON.stringify([
+            'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&w=800&q=80',
+          ]),
+          sellerId: 'u_demo_rajesh',
+          sellerName: 'Rajesh Kumar',
+          sellerPhone: '+91 98401 23456',
+          sellerEmail: 'rajesh.camera@example.com',
+          sellerAddress: 'Gandhipuram, Coimbatore',
+          pickupInstructions: 'All gear cleaned and sanitized. Easy 5-minute setup demonstration provided.',
+          rating: 4.8,
+          reviewCount: 19,
+          createdAt: new Date().toISOString(),
+        },
       ];
 
       for (const p of defaultProducts) {
@@ -187,7 +225,8 @@ export async function ensureTables() {
     }
 
     tablesInitialized = true;
+    console.log('[Turso Cloud SQLite] Tables initialized and verified successfully');
   } catch (err) {
-    console.error('[Vercel SQLite Init Error]', err);
+    console.error('[Turso Cloud SQLite Init Error]', err);
   }
 }

@@ -16,18 +16,17 @@ if (!fs.existsSync(DATA_DIR)) {
   } catch {}
 }
 
-const localDbPath = path.join(DATA_DIR, 'rently.db');
-const url = process.env.TURSO_DATABASE_URL || process.env.SQLITE_URL || `file:${localDbPath.replace(/\\/g, '/')}`;
-const authToken = process.env.TURSO_AUTH_TOKEN;
+const url = process.env.TURSO_DATABASE_URL || process.env.SQLITE_URL || 'libsql://rental-gopika.aws-ap-south-1.turso.io';
+const authToken = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMTEwMTcsImlkIjoiMDFhMTdkYmQtY2IwMS03ZjBjLThkNjEtYzNjYjBmMGJkYTc4Iiwia2lkIjoiM1hKNFMxSmo5MTZxRG5TMzhBM3ZMcmhlMkNyd1ZzNHZqNmI1UWJhN25xUSIsInJpZCI6IjA2MzlmMWE0LTAzZDgtNDA0Zi04NjRlLTNmOWRhNDVlNDIwYiJ9.0WMBWABbz9sciD38FQwBPvqRaWHBQUAAG6jG6SQRlBITdfv7SBehjECxrKVwDSWaBo2ON0hSWRJMePRTu-J-Dw';
 
 export const client = createClient({
   url,
   authToken,
 });
 
-export const isCloudSqlite = Boolean(process.env.TURSO_DATABASE_URL || process.env.SQLITE_URL);
+export const isCloudSqlite = Boolean(url.startsWith('libsql://') || url.startsWith('https://'));
 
-console.log(`[SQLite Database] Connected to: ${isCloudSqlite ? 'Turso Cloud SQLite (' + url + ')' : 'Local SQLite File (' + localDbPath + ')'}`);
+console.log(`[SQLite Database] Connected to: ${isCloudSqlite ? 'Turso Cloud SQLite (' + url + ')' : 'SQLite Database (' + url + ')'}`);
 
 // Initialize tables
 export async function initDb() {
