@@ -20,6 +20,8 @@
    - One-time sign-up intermediary terms & conditions acknowledgment.
 5. **Dynamic Geolocation & Haversine Distance Calculation:**
    - Real-time distance calculation between borrower and lender across South Indian cities & postal codes.
+6. **Turso Cloud SQLite Multi-Device Synchronization:**
+   - Universal real-time cross-device sync for equipment listings, user registration, and rental workflows.
 
 ---
 
