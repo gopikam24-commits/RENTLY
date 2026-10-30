@@ -477,27 +477,19 @@ export default function RentalHubDashboard() {
           } catch {}
           return updated;
         });
-        flash(`"${newProdData.title}" listed successfully!`);
+        flash(`"${newProdData.title}" listed live on Rently! Visible across all accounts & devices.`);
         fetchProducts();
       } else {
-        setProducts((prev) => {
-          const updated = [payload, ...prev];
-          try {
-            localStorage.setItem("rently_v3_products", JSON.stringify(updated));
-          } catch {}
-          return updated;
-        });
-        flash(`"${newProdData.title}" listed successfully!`);
+        const errJson = await res.json().catch(() => ({}));
+        const errMsg = errJson.error || "Server error while saving listing to cloud.";
+        flash(`Warning: ${errMsg}`);
+        // Fallback to local
+        setProducts((prev) => [payload, ...prev]);
       }
     } catch (err) {
-      setProducts((prev) => {
-        const updated = [payload, ...prev];
-        try {
-          localStorage.setItem("rently_v3_products", JSON.stringify(updated));
-        } catch {}
-        return updated;
-      });
-      flash(`"${newProdData.title}" listed successfully!`);
+      console.error("[AddProduct Error]", err);
+      flash(`"${newProdData.title}" saved locally. Cloud sync failed: ${err.message}`);
+      setProducts((prev) => [payload, ...prev]);
     }
     setActiveModal(null);
     setFeedView("all");
@@ -2978,7 +2970,37 @@ function SellModal({ currentUser, onClose, onSubmit }) {
     files.forEach((file) => {
       const reader = new FileReader();
       reader.onload = (event) => {
-        setUploadedPhotos((prev) => [...prev, event.target.result]);
+        const rawUrl = event.target.result;
+        const img = new Image();
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            const maxDim = 1000;
+            let width = img.width;
+            let height = img.height;
+            if (width > maxDim || height > maxDim) {
+              if (width > height) {
+                height = Math.round((height * maxDim) / width);
+                width = maxDim;
+              } else {
+                width = Math.round((width * maxDim) / height);
+                height = maxDim;
+              }
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, width, height);
+            const compressed = canvas.toDataURL("image/jpeg", 0.75);
+            setUploadedPhotos((prev) => [...prev, compressed]);
+          } catch {
+            setUploadedPhotos((prev) => [...prev, rawUrl]);
+          }
+        };
+        img.onerror = () => {
+          setUploadedPhotos((prev) => [...prev, rawUrl]);
+        };
+        img.src = rawUrl;
       };
       reader.readAsDataURL(file);
     });
