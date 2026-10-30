@@ -1,22 +1,19 @@
 import { createClient } from '@libsql/client';
 import dotenv from 'dotenv';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
-
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const DATA_DIR = path.resolve(__dirname, '../data');
 
-if (!fs.existsSync(DATA_DIR)) {
-  try {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  } catch {}
-}
+// Load environment variables from project root (.env) and local cwd
+try {
+  dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+} catch {}
+dotenv.config();
 
-const url = process.env.TURSO_DATABASE_URL || process.env.SQLITE_URL || 'libsql://rental-gopika.aws-ap-south-1.turso.io';
+// Centralized Turso Cloud SQLite credentials
+const url = process.env.TURSO_DATABASE_URL || 'libsql://rental-gopika.aws-ap-south-1.turso.io';
 const authToken = process.env.TURSO_AUTH_TOKEN || 'eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMxMTEwMTcsImlkIjoiMDFhMTdkYmQtY2IwMS03ZjBjLThkNjEtYzNjYjBmMGJkYTc4Iiwia2lkIjoiM1hKNFMxSmo5MTZxRG5TMzhBM3ZMcmhlMkNyd1ZzNHZqNmI1UWJhN25xUSIsInJpZCI6IjA2MzlmMWE0LTAzZDgtNDA0Zi04NjRlLTNmOWRhNDVlNDIwYiJ9.0WMBWABbz9sciD38FQwBPvqRaWHBQUAAG6jG6SQRlBITdfv7SBehjECxrKVwDSWaBo2ON0hSWRJMePRTu-J-Dw';
 
 export const client = createClient({
